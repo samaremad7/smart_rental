@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام التأجير الذكي - PowerRent Pro</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        /* التصميم العام */
+        header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            background: #34495e;
+            padding: 0;
+        }
+        
+        .nav-tab {
+            padding: 15px 30px;
+            color: white;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-tab.active {
+            background: #2c3e50;
+            border-bottom: 3px solid #e74c3c;
+        }
+        
+        .nav-tab:hover {
+            background: #3d566e;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 0;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* الكروت والتصميمات العامة */
+        .card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid #3498db;
+            margin: 20px;
+        }
+        
+        .card h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .data-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .data-label {
+            font-weight: 600;
+            color: #495057;
+        }
+        
+        .data-value {
+            font-weight: 700;
+            color: #e74c3c;
+        }
+        
+        /* الأزرار */
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #219a52;
+            transform: translateY(-2px);
+        }
+        
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+        }
+        
+        /* قسم المحاسبة */
+        .accounting-section {
+            background: #2c3e50;
+            color: white;
+            padding: 25px;
+            margin: 20px;
+            border-radius: 10px;
+        }
+        
+        .transaction {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-right: 4px solid #3498db;
+        }
+        
+        /* الإشعارات */
+        .notification {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-right: 4px solid;
+            animation: slideIn 0.5s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .notification.warning {
+            background: #fff3cd;
+            border-right-color: #ffc107;
+            color: #856404;
+        }
+        
+        .notification.danger {
+            background: #f8d7da;
+            border-right-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .notification.info {
+            background: #d1ecf1;
+            border-right-color: #17a2b8;
+            color: #0c5460;
+        }
+        
+        .notification.success {
+            background: #d4edda;
+            border-right-color: #28a745;
+            color: #155724;
+        }
+        
+        /* الجداول */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: right;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background: #34495e;
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background: #f5f5f5;
+        }
+        
+        /* الرسوم البيانية المبسطة */
+        .chart {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+        }
+        
+        .bar {
+            height: 20px;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            margin: 10px 0;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .data-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">⚡ PowerRent Pro</div>
+            <div class="user-info">
+                <span id="currentUser">شركة الطاقة الذكية (المؤجر)</span>
+            </div>
+        </header>
+        
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="switchTab('admin')">🏢 لوحة التحكم (المؤجر)</div>
+            <div class="nav-tab" onclick="switchTab('customer')">👤 لوحة العميل</div>
+            <div class="nav-tab" onclick="switchTab('notifications')">🔔 الإشعارات والتنبيهات</div>
+        </div>
+
+        <!-- تبويب المؤجر -->
+        <div id="admin" class="tab-content active">
+            <div class="card">
+                <h3>📊 نظرة عامة على جميع المولدات</h3>
+                <div class="controls">
+                    <button class="btn-primary" onclick="simulateAllGenerators()">
+                        🎲 محاكاة بيانات جميع المولدات
+                    </button>
+                    <button class="btn-success" onclick="calculateAllBills()">
+                        💰 حساب جميع الفواتير الشهرية
+                    </button>
+                    <button class="btn-warning" onclick="checkMaintenance()">
+                        🔧 فحص احتياجات الصيانة
+                    </button>
+                </div>
+                
+                <div class="data-grid" id="generatorsGrid">
+                    <!-- سيتم ملؤها بالبيانات -->
+                </div>
+            </div>
+            
+            <div class="accounting-section">
+                <h3>🧾 القيود المحاسبية التلقائية - جميع الشركات</h3>
+                <div id="adminAccountingEntries">
+                    <div class="transaction">
+                        <p>🔹 تم تهيئة النظام المحاسبي - جاهز لتسجيل المعاملات</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- تبويب العميل -->
+        <div id="customer" class="tab-content">
+            <div class="card">
+                <h3>👤 لوحة متابعة العميل</h3>
+                <div class="controls">
+                    <select id="customerSelect" onchange="switchCustomerView()" style="padding: 12px; border-radius: 8px; border: 1px solid #ddd; flex: 1;">
+                        <option value="company1">شركة النور للمقاولات</option>
+                        <option value="company2">مصنع الأمل للصناعات</option>
+                        <option value="company3">مجمع المستشفيات التخصصي</option>
+                    </select>
+                </div>
+                
+                <div id="customerView">
+                    <!-- سيتم تحديثها حسب العميل المختار -->
+                </div>
+            </div>
+        </div>
+
+        <!-- تبويب الإشعارات -->
+        <div id="notifications" class="tab-content">
+            <div class="card">
+                <h3>🔔 مركز الإشعارات والتنبيهات</h3>
+                <div class="controls">
+                    <button class="btn-warning" onclick="generateMaintenanceAlerts()">
+                        ⚠️ إنشاء تنبيهات صيانة
+                    </button>
+                    <button class="btn-primary" onclick="generateUsageAlerts()">
+                        📈 إنشاء تنبيهات استخدام
+                    </button>
+                </div>
+                
+                <div id="notificationsList">
+                    <!-- سيتم ملؤها بالإشعارات -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // قاعدة البيانات الافتراضية للنظام
+        const systemData = {
+            companies: {
+                company1: {
+                    name: "شركة النور للمقاولات",
+                    generators: [
+                        { id: "GEN-001", hours: 0, energy: 0, rate: 70, depRate: 12, maintenanceHours: 0, totalHours: 0 }
+                    ]
+                },
+                company2: {
+                    name: "مصنع الأمل للصناعات", 
+                    generators: [
+                        { id: "GEN-002", hours: 0, energy: 0, rate: 65, depRate: 11, maintenanceHours: 0, totalHours: 0 },
+                        { id: "GEN-003", hours: 0, energy: 0, rate: 65, depRate: 11, maintenanceHours: 0, totalHours: 0 }
+                    ]
+                },
+                company3: {
+                    name: "مجمع المستشفيات التخصصي",
+                    generators: [
+                        { id: "GEN-004", hours: 0, energy: 0, rate: 80, depRate: 15, maintenanceHours: 0, totalHours: 0 },
+                        { id: "GEN-005", hours: 0, energy: 0, rate: 80, depRate: 15, maintenanceHours: 0, totalHours: 0 },
+                        { id: "GEN-006", hours: 0, energy: 0, rate: 80, depRate: 15, maintenanceHours: 0, totalHours: 0 }
+                    ]
+                }
+            },
+            notifications: [],
+            accountingEntries: []
+        };
+
+        // وظائف التبويب
+        function switchTab(tabName) {
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            document.querySelector(`.nav-tab[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+            
+            if(tabName === 'admin') updateAdminView();
+            if(tabName === 'customer') switchCustomerView();
+            if(tabName === 'notifications') updateNotificationsView();
+        }
+
+        // تحديث لوحة المؤجر
+        function updateAdminView() {
+            const grid = document.getElementById('generatorsGrid');
+            grid.innerHTML = '';
+            
+            for(const [companyKey, company] of Object.entries(systemData.companies)) {
+                company.generators.forEach(generator => {
+                    const revenue = generator.hours * generator.rate;
+                    const depreciation = generator.hours * generator.depRate;
+                    
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <h3>⚡ ${generator.id} - ${company.name}</h3>
+                        <div class="data-item">
+                            <span class="data-label">ساعات التشغيل:</span>
+                            <span class="data-value">${generator.hours.toLocaleString()} ساعة</span>
+                        </div>
+                        <div class="data-item">
+                            <span class="data-label">الطاقة المنتجة:</span>
+                            <span class="data-value">${generator.energy.toLocaleString()} ك.و.س</span>
+                        </div>
+                        <div class="data-item">
+                            <span class="data-label">الإيرادات:</span>
+                            <span class="data-value">${revenue.toLocaleString()} جنيه</span>
+                        </div>
+                        <div class="data-item">
+                            <span class="data-label">ساعات الصيانة المتبقية:</span>
+                            <span class="data-value">${500 - (generator.totalHours % 500)} ساعة</span>
+                        </div>
+                        <div class="chart">
+                            <div>مستوى الاستخدام:</div>
+                            <div class="bar" style="width: ${Math.min(100, (generator.hours / 300) * 100)}%"></div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+        }
+
+        // محاكاة بيانات جميع المولدات
+        function simulateAllGenerators() {
+            for(const company of Object.values(systemData.companies)) {
+                company.generators.forEach(generator => {
+                    const randomHours = Math.floor(Math.random() * 250) + 50;
+                    generator.hours = randomHours;
+                    generator.energy = randomHours * 50;
+                    generator.totalHours += randomHours;
+                    
+                    addAccountingEntry(`📡 ${generator.id}: تم تسجيل ${randomHours} ساعة تشغيل`, 'admin');
+                });
+            }
+            updateAdminView();
+            addNotification('info', '🔄 تم تحديث بيانات جميع المولدات من أجهزة الاستشعار');
+        }
+
+        // حساب جميع الفواتير
+        function calculateAllBills() {
+            let totalRevenue = 0;
+            let totalDepreciation = 0;
+            
+            for(const company of Object.values(systemData.companies)) {
+                company.generators.forEach(generator => {
+                    const revenue = generator.hours * generator.rate;
+                    const depreciation = generator.hours * generator.depRate;
+                    
+                    totalRevenue += revenue;
+                    totalDepreciation += depreciation;
+                    
+                    addAccountingEntry(`💰 ${generator.id}: إيرادات ${revenue.toLocaleString()} جنيه`, 'admin');
+                    addAccountingEntry(`📉 ${generator.id}: إهلاك ${depreciation.toLocaleString()} جنيه`, 'admin');
+                });
+            }
+            
+            addAccountingEntry(`📈 إجمالي صافي الدخل: ${(totalRevenue - totalDepreciation).toLocaleString()} جنيه`, 'admin');
+            addNotification('success', '✅ تم حساب جميع الفواتير الشهرية بنجاح');
+        }
+
+        // فحص الصيانة
+        function checkMaintenance() {
+            for(const company of Object.values(systemData.companies)) {
+                company.generators.forEach(generator => {
+                    const remainingHours = 500 - (generator.totalHours % 500);
+                    
+                    if(remainingHours < 50) {
+                        addNotification('warning', `⚠️ ${generator.id} يحتاج صيانة عاجلة (${remainingHours} ساعة متبقية)`);
+                    }
+                    
+                    if(generator.hours > 200) {
+                        addNotification('info', `📊 ${generator.id} استهلاك مرتفع هذا الشهر: ${generator.hours} ساعة`);
+                    }
+                });
+            }
+        }
+
+        // تبديل عرض العميل
+        function switchCustomerView() {
+            const companyKey = document.getElementById('customerSelect').value;
+            const company = systemData.companies[companyKey];
+            const view = document.getElementById('customerView');
+            
+            let html = `
+                <h4>🏢 ${company.name}</h4>
+                <div class="data-grid">
+            `;
+            
+            company.generators.forEach(generator => {
+                const cost = generator.hours * generator.rate;
+                const avgUsage = company.generators.reduce((sum, gen) => sum + gen.hours, 0) / company.generators.length;
+                const isHighUsage = generator.hours > avgUsage * 1.2;
+                
+                html += `
+                    <div class="card">
+                        <h3>⚡ ${generator.id}</h3>
+                        <div class="data-item">
+                            <span class="data-label">استهلاكك هذا الشهر:</span>
+                            <span class="data-value">${generator.hours} ساعة</span>
+                        </div>
+                        <div class="data-item">
+                            <span class="data-label">التكلفة المستحقة:</span>
+                            <span class="data-value">${cost.toLocaleString()} جنيه</span>
+                        </div>
+                        <div class="data-item">
+                            <span class="data-label">متوسط الاستهلاك:</span>
+                            <span class="data-value">${avgUsage.toFixed(0)} ساعة</span>
+                        </div>
+                        ${isHighUsage ? `
+                        <div class="notification warning">
+                            ⚠️ استهلاكك أعلى من المتوسط - يرجى ترشيد الاستخدام
+                        </div>
+                        ` : ''}
+                        ${generator.totalHours % 500 > 450 ? `
+                        <div class="notification danger">
+                            🔧 المولد بحاجة لصيانة قريبة - يرجى التواصل مع الدعم
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            html += `</div>`;
+            view.innerHTML = html;
+        }
+
+        // نظام الإشعارات
+        function addNotification(type, message) {
+            systemData.notifications.unshift({
+                type,
+                message,
+                timestamp: new Date().toLocaleString('ar-EG'),
+                read: false
+            });
+            updateNotificationsView();
+        }
+
+        function updateNotificationsView() {
+            const list = document.getElementById('notificationsList');
+            list.innerHTML = '';
+            
+            systemData.notifications.forEach(notification => {
+                const div = document.createElement('div');
+                div.className = `notification ${notification.type}`;
+                div.innerHTML = `
+                    <strong>${notification.message}</strong>
+                    <div style="font-size: 0.8em; margin-top: 5px; opacity: 0.7;">${notification.timestamp}</div>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function generateMaintenanceAlerts() {
+            systemData.companies.company1.generators[0].totalHours = 2480;
+            addNotification('danger', '🔧 GEN-001: المولد تجاوز 2500 ساعة - صيانة عاجلة مطلوبة!');
+            addNotification('warning', '⚠️ GEN-002: 50 ساعة متبقية للصيانة الدورية');
+        }
+
+        function generateUsageAlerts() {
+            addNotification('info', '📈 GEN-004: استهلاك منخفض هذا الشهر - 60 ساعة فقط');
+            addNotification('warning', '⚡ GEN-003: استهلاك مرتفع - 280 ساعة (أعلى من المتوسط)');
+        }
+
+        // نظام المحاسبة
+        function addAccountingEntry(message, tab = 'admin') {
+            const entry = {
+                message,
+                timestamp: new Date().toLocaleString('ar-EG'),
+                tab
+            };
+            
+            systemData.accountingEntries.unshift(entry);
+            
+            const targetElement = tab === 'admin' ? 'adminAccountingEntries' : 'customerAccountingEntries';
+            const element = document.getElementById(targetElement);
+            if(element) {
+                const div = document.createElement('div');
+                div.className = 'transaction';
+                div.innerHTML = `<p>${message} - <small>${entry.timestamp}</small></p>`;
+                element.appendChild(div);
+            }
+        }
+
+        // التهيئة الأولية
+        document.addEventListener('DOMContentLoaded', function() {
+            addAccountingEntry('🚀 بدء تشغيل النظام المحاسبي المتكامل', 'admin');
+            addAccountingEntry('🔗 الاتصال بمنصة IoT السحابية', 'admin');
+            addNotification('info', '👋 مرحباً بك في نظام PowerRent Pro');
+            updateAdminView();
+            switchCustomerView();
+        });
+    </script>
+</body>
+</html>
